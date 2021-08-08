@@ -1,26 +1,4 @@
-Package changes introduced by [Rohit Ranjan](https://github.com/thefurorjuror), [Himadri Bhatka](https://github.com/sirmisscriesalot) and [Roopsa Sen](https://github.com/RoopsaSen):
-
-https://docs.google.com/document/d/17ZuNeeWueda3P6K-k-E3gGrls1TsR9DtxKbyb-Hnjhc/edit?usp=sharing
-
-Running Instructions:
-Go to the working directory containing src folder and open in terminal.
-```
-colcon build
-```
-Open four other terminal tabs at this location and source the setup.
-```
-.install/local_setup.bash
-```
-Run these commands in order one each in the 4 tabs.
-```
-ros2 run dummy dum_pub 
-ros2 launch frenet_planner planner.launch.py
-ros2 run pure_pursuit_tracker pure_pursuit
-ros2 run py_pubsub PID_Controller
-```
-
-
-# Frenet_Planner_AGV(Readme of the original repo)
+# Frenet_Planner_AGV
 This repository improves upon the work done previously on the sampling based planners in frenet frame. The improvements were done by [Parv Maheshwari](https://github.com/Parv-Maheshwari) and [Animesh Jha](https://github.com/anime-sh).
 
 ## Changes and improvements
