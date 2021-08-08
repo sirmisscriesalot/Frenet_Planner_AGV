@@ -128,6 +128,7 @@ vector<FrenetPath> calc_frenet_paths(double c_speed, double c_d, double c_d_d, d
 	// trace(c_d_d);
 	vector<FrenetPath> frenet_paths;
 	double lower_limit_d, upper_limit_d;
+	// cerr<<MAX_ROAD_WIDTH<<endl;
 	lower_limit_d = -MAX_ROAD_WIDTH; 						
 	upper_limit_d = MAX_ROAD_WIDTH + D_ROAD_W;
 	get_limits_d(lp, &lower_limit_d, &upper_limit_d); // IF not required to sample around previous sampled d(th) then comment this line.
@@ -259,7 +260,12 @@ vector<FrenetPath> calc_global_paths(vector<FrenetPath> fplist, Spline2D csp)
 	}
 	return fplist;
 }
-
+// convert the frenet paths to global frame
+FrenetPath calc_global_path(FrenetPath fp, Spline2D csp)
+{
+	fp.adding_global_path(csp);
+	return fp;
+}
 // transforms robot's footprint
 vector<geometry_msgs::msg::Point32> transformation(vector<geometry_msgs::msg::Point32> fp,geometry_msgs::msg::Pose cp, double px, double py, double pyaw)
 {
@@ -378,7 +384,7 @@ inline bool sortByCost(FrenetPath a, FrenetPath b)
 }
 
 // check for specified velocity, acceleration, curvature constraints and collisions
-vector<FrenetPath> check_path(vector<FrenetPath> &fplist, double bot_yaw, double yaw_error,
+vector<FrenetPath> check_paths(vector<FrenetPath> &fplist, double bot_yaw, double yaw_error,
 							  double obst_r)
 {
 	vector<FrenetPath> fplist_final;
@@ -407,6 +413,29 @@ vector<FrenetPath> check_path(vector<FrenetPath> &fplist, double bot_yaw, double
 		}
 	}
 	return fplist_final;
+}
+
+bool check_path(FrenetPath fp, double bot_yaw, double yaw_error,
+							  double obst_r)
+{
+	int flag = 0;
+	vecD path_yaw = fp.get_yaw();
+	if (path_yaw.size() == 0)
+		return 0;
+	if ((path_yaw[0] - bot_yaw) > yaw_error || (path_yaw[0] - bot_yaw) < -yaw_error) // 20 deg
+	{
+	
+		flag = 1;
+	}
+	if (flag == 1)
+	{
+		return 0;
+	}
+	else if (fp.check_collision(obst_r) == 0)
+	{
+		return 1;
+	}
+	return 0;
 }
 
 void FrenetPath::plot_path()
@@ -444,53 +473,174 @@ FrenetPath frenet_optimal_planning(Spline2D csp, double s0, double c_speed, doub
 {
 	trace("start");
 	double startTime1 = omp_get_wtime();
-	vector<FrenetPath> fplist = calc_frenet_paths(c_speed, c_d, c_d_d, c_d_dd, s0, lp);
+	// vector<FrenetPath> fplist = calc_frenet_paths(c_speed, c_d, c_d_d, c_d_dd, s0, lp);
+	Fplist last(c_speed, c_d, c_d_d, c_d_dd, s0);
+	vector<FrenetPath> fplist = last.fplist_lat;
 	double endTime1 = omp_get_wtime();
+	cerr<<"calc_frenet_paths time : "<<endTime1-startTime1<<endl;
 
-	trace("calc_global_paths");
-	double startTime2 = omp_get_wtime();
-	fplist = calc_global_paths(fplist, csp);
-	double endTime2 = omp_get_wtime();
-	trace("check_path");
-	transform_count = 0;
-	// for now maximum possilble paths are taken into list
-	double startTime3 = omp_get_wtime();
-	fplist = check_path(fplist, bot_yaw, 0.5, 2.0);
-	
-	double endTime3 = omp_get_wtime();
-	trace("done checking ");
-	if (false)
+	double startTime3 = omp_get_wtime();	
+	std::sort(fplist.begin(),fplist.end());
+	for(int i =0; i< fplist.size();i++)
 	{
-		display_paths(fplist);
-	}
-
-	double min_cost = FLT_MAX;
-	double cf;
-	FrenetPath bestpath;
-	for (auto &fp : fplist)
-	{
-		cf = fp.get_cf();
-		if (min_cost >= cf)
+		fplist[i] = calc_global_path(fplist[i],csp);
+		if(check_path(fplist[i], bot_yaw, 0.5, 2.0)==1 || s0-s_dest<=16)
 		{
-			min_cost = cf;
-			bestpath = fp;
+			double endTime3 = omp_get_wtime();
+			// std::cout<<"Checking time: "<<(endTime2-startTime3)<<std::endl;
+			cerr<<"checking time: " << endTime3-startTime3<<endl;
+			return fplist[i];
+		}
+		else
+		{
+			cerr<<"No Path!"<<endl;
 		}
 	}
-	if (false)
-	{
-		plt::ion();
-		plt::show();
-		bestpath.plot_path();
-	}
-	// For plotting velocity profile (x,y) = (t,s_d)
-	if (false)
-	{
-		plt::ion();
-		plt::show();
-		bestpath.plot_velocity_profile();
-	}
-	trace("DONE");
-	return bestpath;
 }
 
+Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s00)
+{
+  c_speed= c_speedc;
+  c_d= c_dc;
+  c_d_d= c_d_dc;
+  c_d_dd= c_d_ddc;
+  s0= s00;
+  
+  if(STOP_CAR)
+	{ 
+		for (double di = -MAX_ROAD_WIDTH; di<MAX_ROAD_WIDTH; di+=D_ROAD_W) 																					   
+		{
+			for (double Ti = MINT; Ti < MAXT; Ti += DT)
+			{
+				FrenetPath temp = calc_lat(di,Ti,0.0);
+				for(int p=0;p<samples_tv;p++)
+				{
+				fplist_lat.push_back(temp);
+				}
+			}
+		}
+	}
+  else
+  {
+    for (double di = -MAX_ROAD_WIDTH; di<MAX_ROAD_WIDTH; di+=D_ROAD_W) 																					   
+		{
+			for (double Ti = MINT; Ti < MAXT; Ti += DT)
+			{
+				for (double Di_d = -MAX_LAT_VEL; Di_d < MAX_LAT_VEL+0.001; Di_d+=D_D_NS)
+				{
+				FrenetPath temp = calc_lat(di,Ti,Di_d);
+				for(int p=0;p<samples_tv;p++)
+				{
+					fplist_lat.push_back(temp);
+				}
+			}
+      	}
+    }
+  }
 
+  if(STOP_CAR)
+	{ 
+    for (double Ti = MINT; Ti < MAXT; Ti += DT)
+    {
+      fplist_lon.push_back(calc_lon(TARGET_SPEED,Ti));
+    }
+	
+  }
+  else
+  {
+    for (double Ti = MINT; Ti < MAXT; Ti += DT)
+		{
+			for (double tv =TARGET_SPEED - D_T_S * N_S_SAMPLE; tv < TARGET_SPEED + D_T_S * N_S_SAMPLE;tv+= D_T_S)
+			{
+        fplist_lon.push_back(calc_lon(tv,Ti));
+      }
+    }
+  }
+
+  for(int i = 0;i<fplist_lat.size();i+=samples_tv)
+  {
+    copy(i);
+  }
+
+  for(int i = 0;i<fplist_lat.size();i++)
+  {
+    calc_cost(i);
+  }  
+
+}
+
+FrenetPath Fplist::calc_lat(double di,double Ti,double Di_d)
+{
+  FrenetPath fp;
+
+	int n = 1 + Ti / DT;
+	fp.t.resize(n);
+	fp.d.resize(n);
+	fp.d_d.resize(n);
+	fp.d_dd.resize(n);
+	fp.d_ddd.resize(n);
+
+	quintic lat_qp(c_d, c_d_d, c_d_dd, di, Di_d, 0.0, Ti);
+	for (int te = 0; te < n; te++)
+	{
+		fp.t[te] = te * DT;
+		fp.d[te] = lat_qp.calc_point(te * DT);
+		fp.d_d[te] = lat_qp.calc_first_derivative(te * DT);
+		fp.d_dd[te] = lat_qp.calc_second_derivative(te * DT);
+		fp.d_ddd[te] = lat_qp.calc_third_derivative(te * DT);
+	}
+
+  vecD d_ddd_vec = fp.d_ddd;
+  fp.Jp=(inner_product(d_ddd_vec.begin(), d_ddd_vec.end(), d_ddd_vec.begin(), 0));
+  fp.Ti=(Ti);
+  fp.cd=(KJ * fp.Jp + KT * Ti + KD * std::pow((fp.d).back(),2));
+  return fp;
+}
+
+FrenetPath Fplist::calc_lon(double tv,double Ti)
+{
+  FrenetPath fp;
+  quintic lon_qp(s0, c_speed, 0.0, min(s0 + 15, s_dest), tv, 0.0, Ti); 
+
+  int n = 1 + Ti / DT;
+  fp.t.resize(n);
+	fp.s.resize(n);
+	fp.s_d.resize(n);
+	fp.s_dd.resize(n);
+	fp.s_ddd.resize(n);
+
+	for (int te = 0; te < n; te++)
+	{
+		fp.t[te] = te * DT;
+		fp.s[te] = lon_qp.calc_point(te * DT);
+		fp.s_d[te] = lon_qp.calc_first_derivative(te * DT);
+		fp.s_dd[te] = lon_qp.calc_second_derivative(te * DT);
+		fp.s_ddd[te] = lon_qp.calc_third_derivative(te * DT);
+	}
+  fp.Ti = (Ti);
+  vecD s_ddd_vec = fp.s_ddd;
+  fp.Js = (inner_product(s_ddd_vec.begin(), s_ddd_vec.end(), s_ddd_vec.begin(), 0));  
+  fp.dss= std::pow((TARGET_SPEED - fp.s_d[-1]), 2);
+  fp.cv=(KJ * fp.Js + KT * fp.Ti + KD * fp.dss);
+  return fp;
+}
+
+void Fplist::copy(int i)
+{
+  int index_start = ((fplist_lat[i]).Ti - MINT) * samples_tv;
+  for(int j=0;j<samples_tv;j++)
+  {
+    fplist_lat[i+j].s=(fplist_lon[index_start+j].s);
+    fplist_lat[i+j].s_d=(fplist_lon[index_start+j].s_d);
+    fplist_lat[i+j].s_dd=(fplist_lon[index_start+j].s_dd);
+    fplist_lat[i+j].s_ddd=(fplist_lon[index_start+j].s_ddd);
+    fplist_lat[i+j].Js=(fplist_lon[index_start+j].Js);
+    fplist_lat[i+j].dss=(fplist_lon[index_start+j].dss);
+    fplist_lat[i+j].cv=(fplist_lon[index_start+j].cv);
+  }
+}
+
+void Fplist::calc_cost(int i)
+{
+  fplist_lat[i].cf = (KLAT * fplist_lat[i].cd + KLON * fplist_lat[i].cv);
+}

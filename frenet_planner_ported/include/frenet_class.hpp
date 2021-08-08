@@ -86,6 +86,8 @@ public:
 	   this->get_parameter("MAX_ACCEL",MAX_ACCEL );
 	   this->declare_parameter<double>("MAX_CURVATURE", 0);
 	   this->get_parameter("MAX_CURVATURE", MAX_CURVATURE);
+		this->declare_parameter<double>("MAX_ROAD_WIDTH", 0);
+	   this->get_parameter("MAX_ROAD_WIDTH", MAX_ROAD_WIDTH);
 	   this->declare_parameter<double>("D_ROAD_W", 0);
 	   this->get_parameter("D_ROAD_W", D_ROAD_W);
 	   this->declare_parameter<double>("DT", 0);
@@ -102,8 +104,8 @@ public:
 	   this->get_parameter("N_S_SAMPLE", N_S_SAMPLE);
 	   this->declare_parameter<double>("ROBOT_RADIUS", 0);
 	   this->get_parameter("ROBOT_RADIUS", ROBOT_RADIUS);
-	   this->declare_parameter<double>("MIN_LAT_VEL", 0);
-	   this->get_parameter("MIN_LAT_VEL", MIN_LAT_VEL);
+	   this->declare_parameter<double>("MAX_LAT_VEL", 0);
+	   this->get_parameter("MAX_LAT_VEL", MAX_LAT_VEL);
 	   this->declare_parameter<double>("D_D_NS", 0);
 	   this->get_parameter("D_D_NS", D_D_NS);
 	   this->declare_parameter<double>("MAX_SHIFT_D", 0);
@@ -177,4 +179,5 @@ public:
    
 
 };
+
 #endif

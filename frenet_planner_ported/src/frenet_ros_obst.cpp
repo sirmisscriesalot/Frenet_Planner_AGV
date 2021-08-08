@@ -127,10 +127,13 @@ void publishPath(nav_msgs::msg::Path &path_msg, FrenetPath &path, vecD &rk, vecD
 
 int main(int argc, char **argv)
 {
+	double Total1 = omp_get_wtime();
+	double ccc =0.0;//counter of iteration for finding avg time
 	bool gotOdom = false;
+	double area = 20.0;
 	rclcpp::init(argc, argv);
 	auto node = std::make_shared<FrenetClass>();
-	
+
 	W_X = node->wx;
 	W_Y = node->wy;
 	TARGET_SPEED = node->target_speed;
@@ -159,13 +162,14 @@ int main(int argc, char **argv)
 	s_dest = global_s.back();
 	bool run_frenet = true;
 	plt::ion();
-		plt::show();
+	plt::show();
 	vector<double> plts0,pltcspeed,plttime;
 	double pltbasetime = omp_get_wtime();
 	int init_flag = true;
 	int iteration_count = 1;
 	while (rclcpp::ok())
 	{
+		ccc++;
 		double mainLoop1 = omp_get_wtime();
 		rclcpp::spin_some(node);
 		ofstream fout;
@@ -194,24 +198,26 @@ int main(int argc, char **argv)
 		//fout<<pltcspeed<<endl;
 		//fout<<"end"<<endl;
 		trace("frenet optimal planning", s0, c_speed, c_d, c_d_d, c_d_dd, lp, bot_yaw);
-		if (abs(s_dest - s0) <= 15)
+		// cerr<<"s_dest = "<<s_dest<<"and s0 = "<<s0<<endl;
+		if (abs(s_dest - s0) <= 15  )
 		{
 			STOP_CAR = true;
-			TARGET_SPEED = 0;
-			//cerr << "STOP\n";
-			//cerr << s_dest << endl;
+			TARGET_SPEED = 0.0;
 		} else{
 			STOP_CAR = false;
 		}
-		if(abs(s0-s_dest) <= 5)
+		if(abs(s0-s_dest) <= 3)
 		{
 			c_speed /= 2;
 		}
-
+		if(abs(s0-s_dest) <= 2)
+		{
+			break;
+		}
 		double startTime2 = omp_get_wtime();
 		path = frenet_optimal_planning(csp, s0, c_speed, c_d, c_d_d, c_d_dd, lp, bot_yaw);
 		double endTime2 = omp_get_wtime();
-
+		cerr<<"frenet_optimal_planning time: "<<endTime2-startTime2<<endl;
 		if (false)
 		{
 			cerr << endl
@@ -239,22 +245,7 @@ int main(int argc, char **argv)
 			loc.pose.position.y = ry[i];
 			global_path_msg.poses[i] = loc;
 		}
-		if (true)
-		{
-			plt::ion();
-			plt::show();
-			plt::plot(lp.get_x(), lp.get_y());
-			plt::pause(0.001);
-			plt::plot(rx, ry);
-			plt::scatter(ob_x,ob_y);
-			plt::pause(0.001);
-		}
-		// Required tranformations on the Frenet path are made and pushed into message
-		double startTime3 = omp_get_wtime();
-		publishPath(path_msg, path, rk, ryaw, c_d, c_speed, c_d_d);
-		double endTime3 = omp_get_wtime();
-
-		/********************* have to find a proper justification for taking the midpoint******/
+				/********************* have to find a proper justification for taking the midpoint******/
 		auto calc_bot_v = [min_id, rk](vecD d, vecD s_d, vecD d_d) {
 			return sqrt(pow(1 - rk[min_id] * d[d.size() / 2], 2) * pow(s_d[s_d.size() / 2], 2) +
 						pow(d_d[d_d.size() / 2], 2));
@@ -276,6 +267,45 @@ int main(int argc, char **argv)
 							 pow(path.get_d_d()[1], 2));
 			}
 		}
+		// if (true)
+		// {
+		// 	plt::ion();
+		// 	plt::show();
+		// 	plt::plot(lp.get_x(), lp.get_y());
+		// 	plt::pause(0.001);
+		// 	plt::plot(rx, ry);
+		// 	plt::scatter(ob_x,ob_y);
+		// 	plt::pause(0.001);
+		// }
+		double startTime3 = omp_get_wtime();
+		if (true)  
+		{
+			plt::cla();
+			// plt::ion();
+			plt::show();
+			// # for stopping simulation with the esc key.
+			// plt::gcf()::canvas::mpl_connect(
+			// 'key_release_event',
+			// lambda event: [exit(0) if event.key == 'escape' else None])
+			plt::plot(rx, ry);
+			// if(ob_x.size() != 0)
+			// {
+			plt::scatter(ob_x, ob_y);
+			plt::plot(path.get_x(), path.get_y());
+			// plt::scatter((path.get_x())[1], (path.get_y())[1]);
+			plt::xlim((path.get_x())[1] - area, (path.get_x())[1] + area);
+			plt::ylim((path.get_y())[1] - area, (path.get_y())[1] + area);
+			// plt::title("v[km/h]:" + str(bot_v*3.6));
+			plt::grid(true);
+			plt::pause(0.00001);
+			// }
+		}
+		double endTime3 = omp_get_wtime();
+		cerr<<"plotting time: "<<endTime3-startTime3<<endl;
+		// Required tranformations on the Frenet path are made and pushed into message
+		
+		publishPath(path_msg, path, rk, ryaw, c_d, c_speed, c_d_d);
+	
 		//if (STOP_CAR)
 		//{
 		//	cerr <<"velocity:"<< bot_v << endl;
@@ -289,7 +319,7 @@ int main(int argc, char **argv)
 		node->publisher_global_path->publish(path_msg);
 		node->publisher_frenet_path->publish(global_path_msg);
 		node->publisher_target_vel->publish(vel);
-		
+
 		
 		ctr++;
 		 //if(!run_frenet){
@@ -298,6 +328,12 @@ int main(int argc, char **argv)
 		 //}
 		fout.close();
 		double mainLoop2 = omp_get_wtime();
+		cerr<<"Main loop time: "<< mainLoop2-mainLoop1<<endl;
+		double Total2 = omp_get_wtime();
+		cerr<<"Avg Main loop time: "<< (Total2-Total1)/ccc<<endl;
 	}
+	double Total3 = omp_get_wtime();
+	cerr<<"Finish"<<endl;
+	cerr<<"Avg Main loop time: "<< (Total3-Total1)/ccc<<endl;
 	return 0;
 }

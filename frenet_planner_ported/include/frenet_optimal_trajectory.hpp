@@ -11,7 +11,7 @@ class FrenetPath
     vecD t, d, d_d, d_dd, d_ddd, s, s_d, s_dd, s_ddd, x, y, yaw, ds, c;
     /*ye c kya hain radius of curvature hain kya, agr haa to frenet_ros main iska use na krke abhi
     local variable ka use ho rha hain initial conditions() main */
-    double Js, Jp, cd, cv, cf;
+    double Js, Jp, cd, cv, cf,Ti,dss;
   /*
       t is the vector comprising of the discrete points in time at which other translational variables are calculated
       d is the vector comprising of the lateral offset(distance) from the expected global path at the discrete points in time
@@ -59,6 +59,15 @@ class FrenetPath
     void plot_path();
     void plot_velocity_profile();
     friend ostream& operator<< (ostream& os, const FrenetPath& fp);
+    friend class Fplist;
+    bool operator > (FrenetPath& other) 
+    {
+        return (cf > other.get_cf());
+    }
+    bool operator < (FrenetPath& other) 
+    {
+        return (cf < other.get_cf());
+    } 
 };
 void get_limits_d(FrenetPath , double* , double *);
 vector<FrenetPath> check_path(vector<FrenetPath>&, double, double, double);
@@ -171,4 +180,24 @@ inline double FrenetPath::get_Js()
 {
   return Js;
 }
+class Fplist
+{
+  public :
+    Fplist(double c_speed,double c_d,double c_d_d,double c_d_dd,double s0);
+    FrenetPath calc_lat(double di,double Ti,double Di_d);
+    FrenetPath calc_lon(double tv,double Ti);
+    void copy(int i);
+    void calc_cost(int i);
+
+    double c_speed;
+    double c_d;
+    double c_d_d;
+    double c_d_dd;
+    double s0;
+    std::vector<FrenetPath> fplist_lat;
+    std::vector<FrenetPath> fplist_lon;
+    int samples_tv =2 * N_S_SAMPLE ;
+};
+
+
 #endif  // FRENET_OPTIMAL_TRAJECTORY_HPP_
