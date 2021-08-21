@@ -1,0 +1,5 @@
+tracking_control
+/home/melo/new/devel/.private/tracking_control/cmake.lock /home/melo/new/devel/./cmake.lock
+/home/melo/new/devel/.private/tracking_control/share/tracking_control/cmake/tracking_controlConfig-version.cmake /home/melo/new/devel/share/tracking_control/cmake/tracking_controlConfig-version.cmake
+/home/melo/new/devel/.private/tracking_control/share/tracking_control/cmake/tracking_controlConfig.cmake /home/melo/new/devel/share/tracking_control/cmake/tracking_controlConfig.cmake
+/home/melo/new/devel/.private/tracking_control/lib/pkgconfig/tracking_control.pc /home/melo/new/devel/lib/pkgconfig/tracking_control.pc
