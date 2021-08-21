@@ -8,7 +8,7 @@
 #include <ros/console.h>
 #include <vector>
 #include<fstream>
-//using namespace tbb;
+
 namespace plt = matplotlibcpp;
 
 int cost_count = 0, footprint_count = 0, odom_count = 0;
@@ -426,7 +426,6 @@ int main(int argc, char **argv)
 		{
 			if (STOP_CAR)
 			{
-				//cerr<< "hi" << endl;
 				bot_v = calc_bot_v(path.get_d(), path.get_s_d(), path.get_d_d());
 			}
 			else
@@ -439,9 +438,9 @@ int main(int argc, char **argv)
 		{
 			cerr << bot_v << endl;
 		}
-		// cerr<<"Time 1 : "<<endTime1-startTime1<<endl;
-		// cerr<<"Time 2 : "<<endTime2-startTime2<<endl;
-		//cerr<<"Time 3 : "<<endTime3-startTime3<<endl;
+		cerr<<"Time 1 (min_id calc) : "<<endTime1-startTime1<<endl;
+		cerr<<"Time 2 (frenet_optimal_planning) : "<<endTime2-startTime2<<endl;
+		cerr<<"Time 3 (publish_path) : "<<endTime3-startTime3<<endl;
 		geometry_msgs::Twist vel;
 		vel.linear.x = bot_v;
 		vel.linear.y = 0;

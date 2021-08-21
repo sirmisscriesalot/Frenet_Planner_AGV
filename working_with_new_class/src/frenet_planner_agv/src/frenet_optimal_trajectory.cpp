@@ -268,17 +268,6 @@ void FrenetPath::adding_global_path(Spline2D csp)
 }
 
 // convert the frenet paths to global frame
-vector<FrenetPath> calc_global_paths(vector<FrenetPath> fplist, Spline2D csp)
-{
-	int n = fplist.size();
-#pragma omp parallel for collapse(1)
-	for (int i = 0; i < n; i++)
-	{
-		//FrenetPath fp = fplist[i];
-		fplist[i].adding_global_path(csp);
-	}
-	return fplist;
-}
 FrenetPath calc_global_path(FrenetPath fp, Spline2D csp)
 {
 	fp.adding_global_path(csp);
@@ -295,7 +284,6 @@ bool check_path(FrenetPath fp, double bot_yaw, double yaw_error,
 	{
 	
 		flag = 1;
-		//cerr<<"yaw error and yaw= "<<(path_yaw[0] - bot_yaw)<<endl;
 	} 
 	if (flag == 1)
 	{
@@ -305,7 +293,6 @@ bool check_path(FrenetPath fp, double bot_yaw, double yaw_error,
 	{
 		return 1;
 	}
-	//cerr<<"obcheck error"<<endl;
 	return 0;
 }
 
@@ -492,31 +479,26 @@ void display_paths(vector<FrenetPath> fplist)
 FrenetPath frenet_optimal_planning(Spline2D csp, double s0, double c_speed, double c_d,
 								   double c_d_d, double c_d_dd, FrenetPath lp, double bot_yaw)
 {
-	trace("start");
+	static FrenetPath bestpath;
 	double startTime1 = omp_get_wtime();
 	//vector<FrenetPath> fplist = calc_frenet_paths(c_speed, c_d, c_d_d, c_d_dd, s0, lp);
 	Fplist last(c_speed, c_d, c_d_d, c_d_dd, s0);
 	vector<FrenetPath> fplist = last.fplist_lat;
 	double endTime1 = omp_get_wtime();
-
+	cerr<<"Time in calc_frenet_paths : "<<endTime1-startTime1<<endl;
 	std::sort(fplist.begin(),fplist.end(),sortByCost);
-
+	double startTime2 = omp_get_wtime();
 	for(int i =0; i< fplist.size();i++)
 	{
 		fplist[i] = calc_global_path(fplist[i],csp);
 		if(check_path(fplist[i], bot_yaw, 0.523599, 2.0)==1 )
 		{
-			return fplist[i];
-			//break;
-		}
-		else
-		{
-			//cerr<<"No Path!"<<endl;
+			bestpath = fplist[i];			
+			break;
 		}
 	}
-
-	FrenetPath bestpath;
-	
+	double endTime2 = omp_get_wtime();
+	cerr<<"Time in check_path loop : "<<endTime2-startTime2<<endl;
 	return bestpath;
 }
 Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s00)
