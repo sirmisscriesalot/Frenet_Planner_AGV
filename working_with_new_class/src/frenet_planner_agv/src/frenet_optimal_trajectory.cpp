@@ -480,12 +480,17 @@ FrenetPath frenet_optimal_planning(Spline2D csp, double s0, double c_speed, doub
 								   double c_d_d, double c_d_dd, FrenetPath lp, double bot_yaw)
 {
 	static FrenetPath bestpath;
+	if(STOP_CAR)
+	{
+		FrenetPath empty;
+		bestpath=empty;
+	}
 	double startTime1 = omp_get_wtime();
 	//vector<FrenetPath> fplist = calc_frenet_paths(c_speed, c_d, c_d_d, c_d_dd, s0, lp);
 	Fplist last(c_speed, c_d, c_d_d, c_d_dd, s0);
 	vector<FrenetPath> fplist = last.fplist_lat;
 	double endTime1 = omp_get_wtime();
-	cerr<<"Time in calc_frenet_paths : "<<endTime1-startTime1<<endl;
+	//cerr<<"Time in calc_frenet_paths : "<<endTime1-startTime1<<endl;
 	std::sort(fplist.begin(),fplist.end(),sortByCost);
 	double startTime2 = omp_get_wtime();
 	for(int i =0; i< fplist.size();i++)
@@ -498,7 +503,7 @@ FrenetPath frenet_optimal_planning(Spline2D csp, double s0, double c_speed, doub
 		}
 	}
 	double endTime2 = omp_get_wtime();
-	cerr<<"Time in check_path loop : "<<endTime2-startTime2<<endl;
+	//cerr<<"Time in check_path loop : "<<endTime2-startTime2<<endl;
 	return bestpath;
 }
 Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s00)
@@ -511,6 +516,7 @@ Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s
   
   if(STOP_CAR)
 	{ 
+//#pragma omp parallel for collapse(2)
 		for (double di = -MAX_ROAD_WIDTH; di<MAX_ROAD_WIDTH; di+=D_ROAD_W) 																					   
 		{
 			for (double Ti = MINT; Ti < MAXT; Ti += DT)
@@ -525,6 +531,7 @@ Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s
 	}
   else
   {
+//#pragma omp parallel for collapse(3)
     for (double di = -MAX_ROAD_WIDTH; di<MAX_ROAD_WIDTH; di+=D_ROAD_W) 																					   
 		{
 			for (double Ti = MINT; Ti < MAXT; Ti += DT)
@@ -543,6 +550,7 @@ Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s
 
   if(STOP_CAR)
 	{ 
+//#pragma omp parallel for collapse(1)
     for (double Ti = MINT; Ti < MAXT; Ti += DT)
     {
       fplist_lon.push_back(calc_lon(TARGET_SPEED,Ti));
@@ -551,6 +559,7 @@ Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s
   }
   else
   {
+//#pragma omp parallel for collapse(1)
     for (double Ti = MINT; Ti < MAXT; Ti += DT)
 		{
 			for (double tv =TARGET_SPEED - D_T_S * N_S_SAMPLE; tv < TARGET_SPEED + D_T_S * N_S_SAMPLE;tv+= D_T_S)
@@ -559,12 +568,12 @@ Fplist::Fplist(double c_speedc,double c_dc,double c_d_dc,double c_d_ddc,double s
       }
     }
   }
-
+//#pragma omp parallel for collapse(1)
   for(int i = 0;i<fplist_lat.size();i+=samples_tv)
   {
     copy(i);
   }
-
+//#pragma omp parallel for collapse(1)
   for(int i = 0;i<fplist_lat.size();i++)
   {
     calc_cost(i);
@@ -584,6 +593,7 @@ FrenetPath Fplist::calc_lat(double di,double Ti,double Di_d)
 	fp.d_ddd.resize(n);
 
 	quintic lat_qp(c_d, c_d_d, c_d_dd, di, Di_d, 0.0, Ti);
+//#pragma omp parallel for collapse(1)
 	for (int te = 0; te < n; te++)
 	{
 		fp.t[te] = te * DT;
@@ -611,7 +621,7 @@ FrenetPath Fplist::calc_lon(double tv,double Ti)
 	fp.s_d.resize(n);
 	fp.s_dd.resize(n);
 	fp.s_ddd.resize(n);
-
+//#pragma omp parallel for collapse(1)
 	for (int te = 0; te < n; te++)
 	{
 		fp.t[te] = te * DT;
@@ -631,6 +641,7 @@ FrenetPath Fplist::calc_lon(double tv,double Ti)
 void Fplist::copy(int i)
 {
   int index_start = ((fplist_lat[i]).Ti - MINT) * samples_tv;
+//#pragma omp parallel for collapse(1)
   for(int j=0;j<samples_tv;j++)
   {
     fplist_lat[i+j].s=(fplist_lon[index_start+j].s);

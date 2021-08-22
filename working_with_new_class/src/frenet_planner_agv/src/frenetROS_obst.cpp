@@ -7,8 +7,8 @@
 #include <utility>
 #include <ros/console.h>
 #include <vector>
-#include<fstream>
-
+#include <iostream>
+#include <cstdio>
 namespace plt = matplotlibcpp;
 
 int cost_count = 0, footprint_count = 0, odom_count = 0;
@@ -243,6 +243,7 @@ void publishPath(nav_msgs::Path &path_msg, FrenetPath &path, vecD &rk, vecD &rya
 
 int main(int argc, char **argv)
 {
+	//freopen( "./output.txt", "w", stderr );	
 	bool gotOdom = false;
 	ros::init(argc, argv, "frenet_planner");
 	ros::NodeHandle n;
@@ -316,8 +317,7 @@ int main(int argc, char **argv)
 	double pltbasetime = omp_get_wtime();
 	while (ros::ok())
 	{
-		ofstream fout;
-		fout.open("/home/animesh/try_ws/src/frenet_planner_agv/src/log.txt",ios::app);
+		double startTime0 = omp_get_wtime();
 		int min_id = 0;
 		// Specifing initial conditions for the frenet planner using odometry
 		double startTime1 = omp_get_wtime();
@@ -331,18 +331,13 @@ int main(int argc, char **argv)
 		// 	initial_conditions_path(csp, s0, c_speed, c_d, c_d_d, c_d_dd, bot_yaw, path);
 		// }
 		double endTime1 = omp_get_wtime();
-		plts0.push_back(s0);
+		/*plts0.push_back(s0);
 		pltcspeed.push_back(c_speed);
 		plttime.push_back(abs(endTime1-pltbasetime));
 		plt::plot(plttime,pltcspeed);
-		plt::pause(0.001);
-		fout<<"a run"<<endl;
-		fout<<plts0<<endl;
-		fout<<plttime<<endl;
-		fout<<pltcspeed<<endl;
-		fout<<"end"<<endl;
+		plt::pause(0.001);*/
 		trace("frenet optimal planning", s0, c_speed, c_d, c_d_d, c_d_dd, lp, bot_yaw);
-		if (abs(203.5 - s0) <= 15) // convert 203.5 to a variable in terms of s_dest
+		if (abs(s_dest - s0) <= 15) // convert 203.5 to a variable in terms of s_dest
 		{
 			STOP_CAR = true;
 			TARGET_SPEED = 0;
@@ -351,12 +346,11 @@ int main(int argc, char **argv)
 		} /*else{
 	  STOP_CAR = false;
 	}*/
-		if(abs(s0-s_dest) <= 5)
+		if(abs(s_dest-s0) <= 5)
 		 {
-		c_speed /= 2;
+		c_speed /=2;
 		 }
-		else if (abs(s0-s_dest)<2)
-		{break;} 
+
 		/*if(run_frenet){
 	  double startTime2 = omp_get_wtime();
 	path = frenet_optimal_planning(csp, s0, c_speed, c_d, c_d_d, c_d_dd, lp, bot_yaw);
@@ -438,9 +432,9 @@ int main(int argc, char **argv)
 		{
 			cerr << bot_v << endl;
 		}
-		cerr<<"Time 1 (min_id calc) : "<<endTime1-startTime1<<endl;
-		cerr<<"Time 2 (frenet_optimal_planning) : "<<endTime2-startTime2<<endl;
-		cerr<<"Time 3 (publish_path) : "<<endTime3-startTime3<<endl;
+		//cerr<<"Time 1 (min_id calc) : "<<endTime1-startTime1<<endl;
+		//cerr<<"Time 2 (frenet_optimal_planning) : "<<endTime2-startTime2<<endl;
+		//cerr<<"Time 3 (publish_path) : "<<endTime3-startTime3<<endl;
 		geometry_msgs::Twist vel;
 		vel.linear.x = bot_v;
 		vel.linear.y = 0;
@@ -453,7 +447,8 @@ int main(int argc, char **argv)
 		//   cerr<<"ending frenet"<<endl;
 		//   break;
 		// }
-		fout.close();
+		double endTime0 = omp_get_wtime();
+		cerr<<"Total main loop time : "<<endTime0-startTime0<<endl;
 		ros::spinOnce();
 	}
 }
