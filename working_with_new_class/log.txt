@@ -1,82 +1,3 @@
-... logging to /home/melo/.ros/log/d0db8a30-031b-11ec-9afb-080027a145c3/roslaunch-melo-VirtualBox-19390.log
-Checking log directory for disk usage. This may take a while.
-Press Ctrl-C to interrupt
-Done checking log file disk usage. Usage is <1GB.
-]2;/home/melo/working_with_new_class/src/frenet_planner_agv/launch/frenet_planner.launch
-[1mstarted roslaunch server http://melo-VirtualBox:38253/[0m
-
-SUMMARY
-========
-
-PARAMETERS
- * /frenet_planner/cost/kd: 0.5
- * /frenet_planner/cost/kd_v: 0.5
- * /frenet_planner/cost/kj: 0.01
- * /frenet_planner/cost/klat: 1.0
- * /frenet_planner/cost/klon: 2.0
- * /frenet_planner/cost/kt: 5
- * /frenet_planner/path/d_d_ns: 0.5
- * /frenet_planner/path/d_road_w: 1.0
- * /frenet_planner/path/d_t_s: 1.389
- * /frenet_planner/path/dt: 0.2
- * /frenet_planner/path/max_accel: 5.0
- * /frenet_planner/path/max_curvature: 2.0
- * /frenet_planner/path/max_lat_vel: 1.0
- * /frenet_planner/path/max_road_width: 10.0
- * /frenet_planner/path/max_shift_d: 3
- * /frenet_planner/path/max_speed: 13.89
- * /frenet_planner/path/maxt: 6.0
- * /frenet_planner/path/min_lat_vel: -1.0
- * /frenet_planner/path/mint: 2.0
- * /frenet_planner/path/n_s_sample: 1.5
- * /frenet_planner/path/robot_radius: 2.0
- * /frenet_planner/path/target_speed: 8.33
- * /frenet_planner/waypoints/W_X: [38, 38, 38, 38, ...
- * /frenet_planner/waypoints/W_Y: [-57, -45, -32.0,...
- * /laser_filter_left/scan_filter_chain: [{'type': 'laser_...
- * /laser_filter_right/scan_filter_chain: [{'type': 'laser_...
- * /move_base/base_global_planner: navfn/NavfnROS
- * /move_base/global_costmap/footprint: [[-0.1, -0.125], ...
- * /move_base/global_costmap/global_frame: map
- * /move_base/global_costmap/height: 500
- * /move_base/global_costmap/inflation_layer/cost_scaling_factor: 10.0
- * /move_base/global_costmap/inflation_layer/enabled: True
- * /move_base/global_costmap/inflation_layer/inflation_radius: 0.5
- * /move_base/global_costmap/map_type: costmap
- * /move_base/global_costmap/obstacle_layer/combination_method: 1
- * /move_base/global_costmap/obstacle_layer/enabled: True
- * /move_base/global_costmap/obstacle_layer/inflation_radius: 0.5
- * /move_base/global_costmap/obstacle_layer/laser1_scan_sensor/clearing: True
- * /move_base/global_costmap/obstacle_layer/laser1_scan_sensor/data_type: LaserScan
- * /move_base/global_costmap/obstacle_layer/laser1_scan_sensor/marking: True
- * /move_base/global_costmap/obstacle_layer/laser1_scan_sensor/sensor_frame: front_left_laser_...
- * /move_base/global_costmap/obstacle_layer/laser1_scan_sensor/topic: /scan_filtered_left
- * /move_base/global_costmap/obstacle_layer/laser_scan_sensor/clearing: True
- * /move_base/global_costmap/obstacle_layer/laser_scan_sensor/data_type: LaserScan
- * /move_base/global_costmap/obstacle_layer/laser_scan_sensor/marking: True
- * /move_base/global_costmap/obstacle_layer/laser_scan_sensor/sensor_frame: front_right_laser...
- * /move_base/global_costmap/obstacle_layer/laser_scan_sensor/topic: /scan_filtered_right
- * /move_base/global_costmap/obstacle_layer/observation_sources: laser_scan_sensor...
- * /move_base/global_costmap/obstacle_layer/obstacle_range: 25
- * /move_base/global_costmap/obstacle_layer/raytrace_range: 30
- * /move_base/global_costmap/obstacle_layer/track_unknown_space: True
- * /move_base/global_costmap/plugins: [{'type': 'costma...
- * /move_base/global_costmap/publish_frequency: 0.5
- * /move_base/global_costmap/robot_base_frame: base_link
- * /move_base/global_costmap/static_layer/enabled: False
- * /move_base/global_costmap/static_layer/map_topic: /map
- * /move_base/global_costmap/static_map: False
- * /move_base/global_costmap/transform_tolerance: 0.5
- * /move_base/global_costmap/update_frequency: 1.0
- * /move_base/global_costmap/width: 500
- * /move_base/local_costmap/footprint: [[-0.1, -0.125], ...
- * /move_base/local_costmap/global_frame: map
- * /move_base/local_costmap/height: 200
- * /move_base/local_costmap/inflation_layer/cost_scaling_factor: 10.0
- * /move_base/local_costmap/inflation_layer/enabled: True
- * /move_base/local_costmap/inflation_layer/inflation_radius: 0.5
- * /move_base/local_costmap/[33m[ WARN] [1629617871.422375750, 1429.597000000]: global_costmap: Pre-Hydro parameter "static_map" unused since "plugins" is provided[0m
-[33m[ WARN] [1629617871.423663360, 1429.597000000]: global_costmap: Pre-Hydro parameter "map_type" unused since "plugins" is provided[0m
 Total main loop time : 0.0425799
 Total main loop time : 0.038526
 Total main loop time : 0.0318898
@@ -95,8 +16,6 @@ Total main loop time : 0.0302669
 Total main loop time : 0.0397799
 Total main loop time : 0.0290044
 Total main loop time : 0.0382658
-[33m[ WARN] [1629617872.385659866, 1429.713000000]: local_costmap: Pre-Hydro parameter "static_map" unused since "plugins" is provided[0m
-[33m[ WARN] [1629617872.386638081, 1429.713000000]: local_costmap: Pre-Hydro parameter "map_type" unused since "plugins" is provided[0m
 Total main loop time : 0.0417479
 Total main loop time : 0.0371828
 Total main loop time : 0.0453848
@@ -105,7 +24,6 @@ Total main loop time : 0.0416672
 Total main loop time : 0.0332435
 Total main loop time : 0.0398886
 Total main loop time : 0.0340993
-[33m[ WARN] [1629617872.677985895, 1429.751000000]: Trajectory Rollout planner initialized with param meter_scoring not set. Set it to true to make your settings robust against changes of costmap resolution.[0m
 Total main loop time : 0.0278519
 Total main loop time : 0.0468289
 Total main loop time : 0.0425325
@@ -292,7 +210,6 @@ Total main loop time : 0.0560996
 Total main loop time : 0.0455655
 Total main loop time : 0.0520638
 Total main loop time : 0.0364459
-[33m[ WARN] [1629617880.207205922, 1430.687000000]: The origin for the sensor at (39.06, -54.07, 0.51) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.0401511
 Total main loop time : 0.048476
 Total main loop time : 0.0376373
@@ -435,7 +352,6 @@ Total main loop time : 0.0581017
 Total main loop time : 0.0798424
 Total main loop time : 0.0832813
 Total main loop time : 0.0904573
-[33m[ WARN] [1629617887.054700265, 1431.687000000]: The origin for the sensor at (39.12, -52.88, 0.51) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.0879742
 Total main loop time : 0.0612304
 Total main loop time : 0.0854992
@@ -511,7 +427,6 @@ Total main loop time : 0.0923296
 Total main loop time : 0.0850448
 Total main loop time : 0.0830764
 Total main loop time : 0.0915793
-[33m[ WARN] [1629617893.745193503, 1432.689000000]: The origin for the sensor at (37.22, -48.29, 0.51) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.12912
 Total main loop time : 0.114043
 Total main loop time : 0.0820147
@@ -665,7 +580,6 @@ Total main loop time : 0.0443474
 Total main loop time : 0.0359632
 Total main loop time : 0.055312
 Total main loop time : 0.0453505
-[33m[ WARN] [1629617900.471687071, 1433.690000000]: The origin for the sensor at (32.88, -41.17, 0.51) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.0688424
 Total main loop time : 0.0331924
 Total main loop time : 0.0504299
@@ -1046,7 +960,6 @@ Total main loop time : 0.0311604
 Total main loop time : 0.0256383
 Total main loop time : 0.0272536
 Total main loop time : 0.0297181
-[33m[ WARN] [1629617914.318178788, 1435.687000000]: The origin for the sensor at (30.90, -25.65, 0.56) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.0305691
 Total main loop time : 0.0288296
 Total main loop time : 0.0285456
@@ -1250,7 +1163,6 @@ Total main loop time : 0.0281313
 Total main loop time : 0.0271883
 Total main loop time : 0.0398489
 Total main loop time : 0.0501203
-[33m[ WARN] [1629617921.298604575, 1436.689000000]: The origin for the sensor at (32.83, -18.88, 0.51) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.0654082
 Total main loop time : 0.0509486
 Total main loop time : 0.0730613
@@ -1596,7 +1508,6 @@ Total main loop time : 0.0355467
 Total main loop time : 0.0380338
 Total main loop time : 0.0348067
 Total main loop time : 0.0334875
-[33m[ WARN] [1629617935.328858874, 1438.688000000]: The origin for the sensor at (40.07, -3.89, 0.51) is out of map bounds. So, the costmap cannot raytrace for it.[0m
 Total main loop time : 0.0335779
 Total main loop time : 0.0342967
 Total main loop time : 0.0508616
@@ -4967,6 +4878,8 @@ Total main loop time : 0.0692581
 Total main loop time : 0.0824994
 Total main loop time : 0.0725506
 Total main loop time : 0.0668433
+
+
 STOP
 205.095
 7.00491
@@ -17315,68 +17228,4 @@ STOP
 205.095
 0.00673661
 Total main loop time : 0.00831394
-corrupted size vs. prev_size
-[0m[ INFO] [1629617871.424790083, 1429.597000000]: global_costmap: Using plugin "obstacle_layer"[0m
-[0m[ INFO] [1629617871.436785948, 1429.598000000]:     Subscribed to Topics: laser_scan_sensor laser1_scan_sensor[0m
-[0m[ INFO] [1629617871.510490552, 1429.602000000]: global_costmap: Using plugin "inflation_layer"[0m
-[0m[ INFO] [1629617872.387568394, 1429.713000000]: local_costmap: Using plugin "obstacle_layer"[0m
-[0m[ INFO] [1629617872.397346231, 1429.713000000]:     Subscribed to Topics: laser_scan_sensor laser1_scan_sensor[0m
-[0m[ INFO] [1629617872.486582793, 1429.732000000]: local_costmap: Using plugin "inflation_layer"[0m
-[0m[ INFO] [1629617872.640438376, 1429.751000000]: Created local_planner base_local_planner/TrajectoryPlannerROS[0m
-[0m[ INFO] [1629617872.661961941, 1429.751000000]: Sim period is set to 0.05[0m
-[0m[ INFO] [1629617873.084219492, 1429.783000000]: Recovery behavior will clear layer 'obstacles'[0m
-[0m[ INFO] [1629617873.094203994, 1429.783000000]: Recovery behavior will clear layer 'obstacles'[0m
-[0m[ INFO] [1629617874.108381234, 1429.888000000]: odom received![0m
-map_type: costmap
- * /move_base/local_costmap/obstacle_layer/combination_method: 1
- * /move_base/local_costmap/obstacle_layer/enabled: True
- * /move_base/local_costmap/obstacle_layer/inflation_radius: 0.5
- * /move_base/local_costmap/obstacle_layer/laser1_scan_sensor/clearing: True
- * /move_base/local_costmap/obstacle_layer/laser1_scan_sensor/data_type: LaserScan
- * /move_base/local_costmap/obstacle_layer/laser1_scan_sensor/marking: True
- * /move_base/local_costmap/obstacle_layer/laser1_scan_sensor/sensor_frame: front_left_laser_...
- * /move_base/local_costmap/obstacle_layer/laser1_scan_sensor/topic: /scan_filtered_left
- * /move_base/local_costmap/obstacle_layer/laser_scan_sensor/clearing: True
- * /move_base/local_costmap/obstacle_layer/laser_scan_sensor/data_type: LaserScan
- * /move_base/local_costmap/obstacle_layer/laser_scan_sensor/marking: True
- * /move_base/local_costmap/obstacle_layer/laser_scan_sensor/sensor_frame: front_right_laser...
- * /move_base/local_costmap/obstacle_layer/laser_scan_sensor/topic: /scan_filtered_right
- * /move_base/local_costmap/obstacle_layer/observation_sources: laser_scan_sensor...
- * /move_base/local_costmap/obstacle_layer/obstacle_range: 25
- * /move_base/local_costmap/obstacle_layer/raytrace_range: 30
- * /move_base/local_costmap/obstacle_layer/track_unknown_space: True
- * /move_base/local_costmap/plugins: [{'type': 'costma...
- * /move_base/local_costmap/publish_frequency: 5.0
- * /move_base/local_costmap/resolution: 0.1
- * /move_base/local_costmap/robot_base_frame: base_link
- * /move_base/local_costmap/rolling_window: True
- * /move_base/local_costmap/static_layer/enabled: False
- * /move_base/local_costmap/static_layer/map_topic: /map
- * /move_base/local_costmap/static_map: False
- * /move_base/local_costmap/transform_tolerance: 0.5
- * /move_base/local_costmap/update_frequency: 10.0
- * /move_base/local_costmap/width: 200
- * /move_base/use_sim_time: True
- * /rosdistro: melodic
- * /rosversion: 1.14.11
 
-NODES
-  /
-    frenet_planner (frenet_planner/frenet_planner)
-    laser_filter_left (laser_filters/scan_to_scan_filter_chain)
-    laser_filter_right (laser_filters/scan_to_scan_filter_chain)
-    move_base (move_base/move_base)
-
-[1mROS_MASTER_URI=http://localhost:11311[0m
-]2;/home/melo/working_with_new_class/src/frenet_planner_agv/launch/frenet_planner.launch http://localhost:11311
-[1mprocess[frenet_planner-1]: started with pid [19407][0m
-[1mprocess[laser_filter_right-2]: started with pid [19409][0m
-[1mprocess[laser_filter_left-3]: started with pid [19414][0m
-[1mprocess[move_base-4]: started with pid [19415][0m
-[move_base-4] killing on exit
-[laser_filter_left-3] killing on exit
-[laser_filter_right-2] killing on exit
-[frenet_planner-1] killing on exit
-shutting down processing monitor...
-... shutting down processing monitor complete
-[1mdone[0m
