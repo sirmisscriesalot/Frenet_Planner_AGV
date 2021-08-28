@@ -117,6 +117,7 @@ public:
 		return (cf < other.get_cf());
 	}
 };
+double dist(double x1, double y1, double x2, double y2);
 void get_limits_d(FrenetPath, double *, double *);
 vector<FrenetPath> check_path(vector<FrenetPath> &, double, double, double);
 vector<FrenetPath> calc_frenet_paths(double, double, double, double, double, FrenetPath);
