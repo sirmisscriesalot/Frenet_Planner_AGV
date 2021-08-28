@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -35,4 +34,4 @@
 .vscode
 **/.vscode/
 **/log/
-
+.catkin_tools
