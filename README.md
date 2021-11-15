@@ -1,10 +1,10 @@
 # Frenet_Planner_AGV
-This repository improves upon the work done previously on the sampling based planners in frenet frame. The improvements were done by [Parv Maheshwari](https://github.com/Parv-Maheshwari), [Animesh Jha](https://github.com/anime-sh), [Rohit Ranjan](https://github.com/thefurorjuror), [Himadri Bhatka](https://github.com/sirmisscriesalot) and [Aayush Jain](https://github.com/Aayush-Jain01).
+This repository improves upon the work done previously on the sampling based planners in frenet frame. The improvements were done by [Parv Maheshwari](https://github.com/Parv-Maheshwari), [Animesh Jha](https://github.com/anime-sh), [Rohit Ranjan](https://github.com/thefurorjuror), [Himadri Bhakta](https://github.com/sirmisscriesalot) and [Aayush Jain](https://github.com/Aayush-Jain01).
 
 ## Changes and improvements
 ### Version 2.0 
 #### Contributors
-[Rohit Ranjan](https://github.com/thefurorjuror), [Himadri Bhatka](https://github.com/sirmisscriesalot) and [Aayush Jain](https://github.com/Aayush-Jain01)
+[Rohit Ranjan](https://github.com/thefurorjuror), [Himadri Bhakta](https://github.com/sirmisscriesalot) and [Aayush Jain](https://github.com/Aayush-Jain01)
 #### Changes and Results
 Here is a brief summary of the changes and improvements made in the planner:
 * Sorting based on path cost introduced. Sampled paths are now checked for collision in ascending order of path cost.
